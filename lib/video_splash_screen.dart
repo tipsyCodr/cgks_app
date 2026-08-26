@@ -1,12 +1,15 @@
 import 'package:cgks/bottom_navigation.dart';
 import 'package:cgks/features/auth/register_page.dart';
+import 'package:cgks/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoSplashScreen extends StatefulWidget {
+  const VideoSplashScreen({super.key});
+
   @override
-  _VideoSplashScreenState createState() => _VideoSplashScreenState();
+  State<VideoSplashScreen> createState() => _VideoSplashScreenState();
 }
 
 class _VideoSplashScreenState extends State<VideoSplashScreen> {
@@ -35,16 +38,21 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
   void _goToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
     final loggedIn = prefs.getBool("logged_in") ?? false;
+    final seenOnboarding = prefs.getBool("seen_onboarding") ?? false;
+
+    if (!mounted) return;
+
     if (loggedIn) {
-      if (!mounted) return;
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (context) => BottomNav()));
-    } else {
-      if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        // MaterialPageRoute(builder: (context) => ReferralPage()),
-        MaterialPageRoute(builder: (context) => RegisterPage()),
+        MaterialPageRoute(builder: (context) => BottomNav()),
+      );
+    } else if (!seenOnboarding) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const RegisterPage()),
       );
     }
   }
