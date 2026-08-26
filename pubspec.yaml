@@ -2,7 +2,7 @@ name: "cgks"
 description: "An App for managing Chattisgarh Kranti Sena Community."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 4.0.0+6
+version: 4.0.2+7
 
 environment:
   sdk: ^3.8.1
@@ -74,7 +74,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -103,31 +102,31 @@ flutter:
   fonts:
     - family: Poppins
       fonts:
-          - asset: fonts/Poppins-Black.ttf 
-          - asset: fonts/Poppins-BlackItalic.ttf 
-          - asset: fonts/Poppins-Bold.ttf 
-          - asset: fonts/Poppins-BoldItalic.ttf 
-          - asset: fonts/Poppins-ExtraBold.ttf 
-          - asset: fonts/Poppins-ExtraBoldItalic.ttf 
-          - asset: fonts/Poppins-ExtraLight.ttf 
-          - asset: fonts/Poppins-ExtraLightItalic.ttf 
-          - asset: fonts/Poppins-Italic.ttf 
-          - asset: fonts/Poppins-Light.ttf 
-          - asset: fonts/Poppins-LightItalic.ttf 
-          - asset: fonts/Poppins-Medium.ttf 
-          - asset: fonts/Poppins-MediumItalic.ttf 
-          - asset: fonts/Poppins-Regular.ttf 
-          - asset: fonts/Poppins-SemiBold.ttf 
-          - asset: fonts/Poppins-SemiBoldItalic.ttf 
-          - asset: fonts/Poppins-Thin.ttf 
-          - asset: fonts/Poppins-ThinItalic.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+        - asset: fonts/Poppins-Black.ttf
+        - asset: fonts/Poppins-BlackItalic.ttf
+        - asset: fonts/Poppins-Bold.ttf
+        - asset: fonts/Poppins-BoldItalic.ttf
+        - asset: fonts/Poppins-ExtraBold.ttf
+        - asset: fonts/Poppins-ExtraBoldItalic.ttf
+        - asset: fonts/Poppins-ExtraLight.ttf
+        - asset: fonts/Poppins-ExtraLightItalic.ttf
+        - asset: fonts/Poppins-Italic.ttf
+        - asset: fonts/Poppins-Light.ttf
+        - asset: fonts/Poppins-LightItalic.ttf
+        - asset: fonts/Poppins-Medium.ttf
+        - asset: fonts/Poppins-MediumItalic.ttf
+        - asset: fonts/Poppins-Regular.ttf
+        - asset: fonts/Poppins-SemiBold.ttf
+        - asset: fonts/Poppins-SemiBoldItalic.ttf
+        - asset: fonts/Poppins-Thin.ttf
+        - asset: fonts/Poppins-ThinItalic.ttf
+    #       - asset: fonts/Schyler-Italic.ttf
+    #         style: italic
     - family: Inter
       fonts:
         - asset: fonts/Inter-VariableFont_opsz,wght.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+    #       - asset: fonts/TrajanPro_Bold.ttf
+    #         weight: 700
     - family: Nunito
       fonts:
         - asset: fonts/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf
