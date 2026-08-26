@@ -2,12 +2,13 @@ import 'package:cgks/api_service.dart';
 import 'package:cgks/bottom_navigation.dart';
 import 'package:cgks/features/auth/forgot_password_screen.dart';
 import 'package:cgks/features/auth/referral_page.dart';
+import 'package:cgks/features/auth/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_links/app_links.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -30,10 +31,13 @@ class _LoginPageState extends State<LoginPage> {
       final appLinks = AppLinks();
       final uri = await appLinks.getInitialLink();
       if (uri != null && uri.path.contains('/register')) {
+        final refCode = uri.queryParameters['ref'];
         if (mounted) {
-          Navigator.of(
-            context,
-          ).pushReplacement(MaterialPageRoute(builder: (_) => ReferralPage()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => RegisterPage(initialReferralCode: refCode),
+            ),
+          );
         }
       }
     } catch (e) {

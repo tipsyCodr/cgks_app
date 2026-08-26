@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:cgks/api_service.dart';
 import 'package:cgks/bottom_navigation.dart';
+import 'package:cgks/components/qr_scanner_screen.dart';
 import 'package:cgks/dto/register_user_dto.dart';
 import 'package:cgks/features/auth/controllers/register_form_controllers.dart';
 import 'package:cgks/features/auth/login_page.dart';
@@ -21,6 +23,9 @@ Widget _buildTextField({
   TextInputType type = TextInputType.text,
   bool obscure = false,
   Widget? suffixIcon,
+  String? helperText,
+  Color? helperColor,
+  void Function(String)? onChanged,
 }) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
@@ -28,10 +33,19 @@ Widget _buildTextField({
       controller: controller,
       keyboardType: type,
       obscureText: obscure,
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
         suffixIcon: suffixIcon,
+        helperText: helperText,
+        helperStyle: helperColor != null
+            ? TextStyle(
+                color: helperColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              )
+            : null,
       ),
       validator: (value) => value == null || value.isEmpty ? 'Required' : null,
     ),
@@ -46,6 +60,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isPasswordVisible = false;
   bool _isConfPasswordVisible = false;
 
+  Timer? _debounceTimer;
+  String? _referrerName;
+  bool _isReferrerValid = false;
+  bool _isCheckingReferral = false;
+
   List<String> designations = [];
   String? selectedDesignation;
 
@@ -55,24 +74,24 @@ class _RegisterPageState extends State<RegisterPage> {
     final initialCode = widget.initialReferralCode?.trim();
     if (initialCode != null && initialCode.isNotEmpty) {
       form.referralCode.text = initialCode;
-      _fetchReferrerDetails(initialCode);
+      _fetchReferrerDetails(initialCode, showToast: true);
     }
     _initDeepLinkListener();
   }
 
   void _initDeepLinkListener() async {
-    final _appLinks = AppLinks();
+    final appLinks = AppLinks();
 
     // Check initial link
     try {
-      final uri = await _appLinks.getInitialLink();
+      final uri = await appLinks.getInitialLink();
       if (uri != null) _handleDeepLink(uri);
     } catch (e) {
       debugPrint("Error getting initial link: $e");
     }
 
     // Listen for future links
-    _appLinks.uriLinkStream.listen(
+    appLinks.uriLinkStream.listen(
       (uri) {
         _handleDeepLink(uri);
       },
@@ -84,47 +103,101 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _handleDeepLink(Uri uri) {
     debugPrint("Deep link received: $uri");
-    final refCode = uri.queryParameters['ref'];
+    String? refCode = uri.queryParameters['ref'];
+    if (refCode == null || refCode.isEmpty) {
+      final segments = uri.pathSegments;
+      if (segments.length >= 2 && segments[0] == 'register') {
+        refCode = segments[1];
+      }
+    }
     if (refCode != null && refCode.isNotEmpty) {
       setState(() {
-        form.referralCode.text = refCode;
+        form.referralCode.text = refCode!;
       });
-      _fetchReferrerDetails(refCode);
+      _fetchReferrerDetails(refCode, showToast: true);
     }
   }
 
-  void _fetchReferrerDetails(String code) async {
+  void _onReferralCodeChanged(String value) {
+    _debounceTimer?.cancel();
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      setState(() {
+        _referrerName = null;
+        _isReferrerValid = false;
+        _isCheckingReferral = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isCheckingReferral = true;
+    });
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _fetchReferrerDetails(trimmed, showToast: false);
+    });
+  }
+
+  Future<void> _scanQrCode() async {
+    final scannedResult = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+    );
+    if (scannedResult != null && scannedResult.isNotEmpty) {
+      setState(() {
+        form.referralCode.text = scannedResult;
+      });
+      _fetchReferrerDetails(scannedResult, showToast: true);
+    }
+  }
+
+  void _fetchReferrerDetails(String code, {bool showToast = false}) async {
+    final trimmed = code.trim();
+    if (trimmed.isEmpty) return;
+
+    setState(() {
+      _isCheckingReferral = true;
+    });
+
     try {
-      Fluttertoast.showToast(msg: "Applying referral code...");
-      final user = await ApiService().getReferredCodeUser(code);
+      final user = await ApiService().getReferredCodeUser(trimmed);
       if (mounted) {
         setState(() {
-          if (user.district != null) form.district.text = user.district!;
-          if (user.city != null) form.city.text = user.city!;
+          _isReferrerValid = true;
+          _referrerName =
+              "रेफरर: ${user.name}${user.city.isNotEmpty ? ' (${user.city})' : ''}";
+          _isCheckingReferral = false;
+          if (user.district.isNotEmpty && form.district.text.isEmpty) {
+            form.district.text = user.district;
+          }
+          if (user.city.isNotEmpty && form.city.text.isEmpty) {
+            form.city.text = user.city;
+          }
         });
-        Fluttertoast.showToast(msg: "Referral applied: ${user.name}");
+        if (showToast) {
+          Fluttertoast.showToast(msg: "Referral applied: ${user.name}");
+        }
       }
     } catch (e) {
       debugPrint("Error fetching referrer: $e");
-      Fluttertoast.showToast(msg: "Invalid referral code");
+      if (mounted) {
+        setState(() {
+          _isReferrerValid = false;
+          _referrerName = "अमान्य रेफरल कोड";
+          _isCheckingReferral = false;
+        });
+        if (showToast) {
+          Fluttertoast.showToast(msg: "Invalid referral code");
+        }
+      }
     }
   }
 
-  // Future<void> fetchDropdownData() async {
-  //   try {
-  //     final des = await ApiService().getDesignations();
-  //     setState(() {
-  //       designations = des;
-  //     });
-  //   } catch (e) {
-  //     Fluttertoast.showToast(msg: "Failed to load designations: $e");
-  //   }
-  // }
-
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     form.dispose();
-
     super.dispose();
   }
 
@@ -173,19 +246,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     children: [
                       Image.asset('assets/images/logo.png', height: 200),
-                      SizedBox(height: 20),
-                      // 👇 Add Login Link Here
+                      const SizedBox(height: 20),
                       Center(
                         child: TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(),
+                                builder: (context) => const LoginPage(),
                               ),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             "पहले से अकाउंट है? लॉग इन करें.",
                             style: TextStyle(
                               color: Colors.black,
@@ -225,6 +297,43 @@ class _RegisterPageState extends State<RegisterPage> {
                       _buildTextField(
                         controller: form.referralCode,
                         label: "रेफरल कोड",
+                        onChanged: _onReferralCodeChanged,
+                        helperText: _referrerName,
+                        helperColor: _isReferrerValid
+                            ? Colors.green[700]
+                            : Colors.red,
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_isCheckingReferral)
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            else if (_isReferrerValid)
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.qr_code_scanner,
+                                color: Colors.red,
+                              ),
+                              tooltip: "QR कोड स्कैन करें",
+                              onPressed: _scanQrCode,
+                            ),
+                          ],
+                        ),
                       ),
                       _buildTextField(
                         controller: form.password,

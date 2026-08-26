@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,6 +29,107 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadUserData();
+  }
+
+  void _showReferralQrCode() {
+    final referralCode = user!['referral_code'] ?? '';
+    if (referralCode.isEmpty) {
+      Fluttertoast.showToast(msg: "Referral code not found");
+      return;
+    }
+    final link = "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "मेरा रेफरल क्यूआर कोड",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                user!['name'] ?? '',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: QrImageView(
+                  data: link,
+                  version: QrVersions.auto,
+                  size: 200.0,
+                  embeddedImage: const AssetImage('assets/images/logo.png'),
+                  embeddedImageStyle: const QrEmbeddedImageStyle(
+                    size: Size(36, 36),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "कोड: $referralCode",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: () {
+                  Share.share(
+                    "Join CGKS App using my referral code: $referralCode\n\nLink: $link",
+                  );
+                },
+                icon: const Icon(Icons.share),
+                label: const Text("शेयर करें"),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(double.infinity, 45),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _loadUserData() async {
@@ -152,11 +254,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                FilledButton(
+                FilledButton.icon(
                   onPressed: () async {
                     final updatedUser = await Navigator.push(
                       context,
@@ -172,12 +275,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Row(
-                    children: [const Icon(Icons.edit), Text('Edit Profile')],
-                  ),
+                  icon: const Icon(Icons.edit, size: 18),
+                  label: const Text('Edit Profile'),
                 ),
-                const SizedBox(width: 10),
-                FilledButton(
+                FilledButton.icon(
+                  onPressed: _showReferralQrCode,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  icon: const Icon(Icons.qr_code, size: 18),
+                  label: const Text('QR Code'),
+                ),
+                FilledButton.icon(
                   onPressed: () {
                     final referralCode = user!['referral_code'] ?? '';
                     if (referralCode.isEmpty) {
@@ -196,9 +308,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Row(
-                    children: [const Icon(Icons.share), Text('Share Link')],
-                  ),
+                  icon: const Icon(Icons.share, size: 18),
+                  label: const Text('Share Link'),
                 ),
               ],
             ),
