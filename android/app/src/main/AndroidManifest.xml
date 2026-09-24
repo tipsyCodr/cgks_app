@@ -38,7 +38,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" />
-                <data android:host="cgks.pathideamultiskill.com" />
+                <data android:host="chhattisgarhiyakrantisena.com" />
+                <data android:host="www.chhattisgarhiyakrantisena.com" />
                 <data android:pathPrefix="/register" />
             </intent-filter>
 

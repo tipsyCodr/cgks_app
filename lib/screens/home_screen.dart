@@ -288,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, snapshot) {
               final user = snapshot.data;
               final profilePhoto = user != null && user['profile_photo'] != null
-                  ? "https://cgks.pathideamultiskill.com/storage/${user['profile_photo']}"
+                  ? "${Constants.storageUrl}/${user['profile_photo']}"
                   : null;
 
               return GestureDetector(
@@ -447,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return;
                           }
                           final link =
-                              "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
+                              "${Constants.baseUrl}/register?ref=$referralCode";
                           Share.share(
                             "Join CGKS App using my referral code: $referralCode\n\nLink: $link",
                           );

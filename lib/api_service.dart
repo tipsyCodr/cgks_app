@@ -12,7 +12,7 @@ import 'dart:io';
 class ApiService {
   // final String baseUrl = "http://10.0.2.2:8000/api"; // replace with your IP
   final String baseUrl =
-      "https://cgks.pathideamultiskill.com/api"; // replace with your IP
+      "https://chhattisgarhiyakrantisena.com/api";
 
   // Timeout duration for HTTP requests
   static const Duration timeout = Duration(seconds: 30);
@@ -548,6 +548,7 @@ class ApiService {
             Uri.parse("$baseUrl/announcements"),
             headers: {
               "Content-Type": "application/json",
+              "Accept": "application/json",
               "Authorization": "Bearer $token",
             },
           )
@@ -626,6 +627,7 @@ class ApiService {
       Uri.parse("$baseUrl/news"),
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
         "Authorization": "Bearer $token",
       },
     );
@@ -843,6 +845,7 @@ class ApiService {
             Uri.parse("$baseUrl/contact-details"),
             headers: {
               "Content-Type": "application/json",
+              "Accept": "application/json",
               "Authorization": "Bearer $token",
             },
           )

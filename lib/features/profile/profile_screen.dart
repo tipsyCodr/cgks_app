@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Fluttertoast.showToast(msg: "Referral code not found");
       return;
     }
-    final link = "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
+    final link = "${Constants.baseUrl}/register?ref=$referralCode";
 
     showModalBottomSheet(
       context: context,
@@ -867,7 +867,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return;
                       }
                       final link =
-                          "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
+                          "${Constants.baseUrl}/register?ref=$referralCode";
                       Share.share(
                         "Join CGKS App using my referral code: $referralCode\n\nLink: $link",
                       );
