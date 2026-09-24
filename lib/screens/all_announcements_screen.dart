@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api_service.dart';
+import '../components/announcement_card.dart';
 import 'announcement_detail_screen.dart';
 
 class AllAnnouncementsScreen extends StatefulWidget {
@@ -33,19 +34,14 @@ class _AllAnnouncementsScreenState extends State<AllAnnouncementsScreen> {
             return const Center(child: Text('कोई घोषणा नहीं मिली।'));
           }
           final announcements = snapshot.data!;
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
             itemCount: announcements.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
-              final ann = announcements[index];
-              return ListTile(
-                title: Text(ann['content'] ?? ''),
-                subtitle: Text(
-                  ann['content'] ?? '',
-                  maxLines: 2, // limit to 2 lines
-                  overflow:
-                      TextOverflow.ellipsis, // add "..." if text is longer
-                  style: TextStyle(color: Colors.black),
-                ),
+              final ann = Map<String, dynamic>.from(announcements[index]);
+              return AnnouncementCard(
+                announcement: ann,
                 onTap: () {
                   Navigator.push(
                     context,

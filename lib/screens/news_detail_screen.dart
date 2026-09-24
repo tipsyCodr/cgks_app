@@ -1,6 +1,7 @@
 import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import '../api_service.dart';
 
 class NewsDetailScreen extends StatefulWidget {
@@ -23,8 +24,19 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("समाचार विवरण")),
-      body: FutureBuilder<Map<String, dynamic>>(
+      backgroundColor: Constants.navBarColor,
+      appBar: AppBar(
+        title: const Text(
+          "समाचार विवरण",
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: CurvedBody(
+        child: FutureBuilder<Map<String, dynamic>>(
         future: _newsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,7 +89,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
                       "${Constants.storageUrl}/${news['image_url']}",
-                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox.shrink(),
                     ),
                   ),
                 const SizedBox(height: 8),
@@ -87,14 +102,12 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 12),
-                Html(
-                  data: news['content'] ?? 'कोई विवरण नहीं',
-                  style: {
-                    "body": Style(
-                      fontSize: FontSize(16),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  },
+                HtmlWidget(
+                  news['content'] ?? 'कोई विवरण नहीं',
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 const Divider(),
@@ -112,8 +125,9 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _CommentsSection extends StatefulWidget {

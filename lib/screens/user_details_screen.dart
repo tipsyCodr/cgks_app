@@ -1,4 +1,5 @@
 import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:flutter/material.dart';
 
 class UserDetailsScreen extends StatelessWidget {
@@ -9,8 +10,19 @@ class UserDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(user["name"] ?? "User Details")),
-      body: SingleChildScrollView(
+      backgroundColor: Constants.navBarColor,
+      appBar: AppBar(
+        title: Text(
+          user["name"] ?? "User Details",
+          style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: CurvedBody(
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,8 +71,9 @@ class UserDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _infoRow(String label, dynamic value) {
     if (value == null || value.toString().isEmpty) return const SizedBox();

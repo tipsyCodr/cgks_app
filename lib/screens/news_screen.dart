@@ -3,6 +3,8 @@ import 'package:cgks/components/post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../api_service.dart';
+import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -93,27 +95,31 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.navBarColor,
       appBar: AppBar(
-        elevation: 4,
-        shadowColor: Colors.black.withValues(alpha: 0.3),
+        elevation: 0,
         centerTitle: true,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "समाचार",
-          style: TextStyle(fontWeight: FontWeight.w800),
+          "प्रेस विज्ञप्ति / समाचार",
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
         ),
         actions: [
           IconButton(
             icon: Icon(
               Icons.calendar_month,
-              color: _selectedDate != null ? Colors.red : Colors.black87,
+              color: _selectedDate != null ? Constants.accentColor : Colors.white,
             ),
             tooltip: "तारीख से खोजें",
             onPressed: _pickDate,
           ),
         ],
       ),
-      body: Column(
-        children: [
+      body: CurvedBody(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
           // Categories List
           FutureBuilder<List<dynamic>>(
             future: _categoriesFuture,
@@ -148,7 +154,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: const Text("All"),
+                          label: const Text("सभी"),
                           selected: isSelected,
                           onSelected: (selected) {
                             if (selected) {
@@ -158,21 +164,18 @@ class _NewsScreenState extends State<NewsScreen> {
                               _fetchNews();
                             }
                           },
-                          backgroundColor: Colors.grey[200],
-                          selectedColor: Colors.red[100],
+                          backgroundColor: const Color(0xFFF1F3F5),
+                          selectedColor: Constants.accentColor,
+                          showCheckmark: false,
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.red : Colors.black,
+                            color: isSelected ? Colors.white : Colors.black87,
                             fontWeight: isSelected
                                 ? FontWeight.bold
-                                : FontWeight.normal,
+                                : FontWeight.w500,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                              color: isSelected
-                                  ? Colors.red
-                                  : Colors.transparent,
-                            ),
+                            side: BorderSide.none,
                           ),
                         ),
                       );
@@ -193,19 +196,18 @@ class _NewsScreenState extends State<NewsScreen> {
                           });
                           _fetchNews();
                         },
-                        backgroundColor: Colors.grey[200],
-                        selectedColor: Colors.red[100],
+                        backgroundColor: const Color(0xFFF1F3F5),
+                        selectedColor: Constants.accentColor,
+                        showCheckmark: false,
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.red : Colors.black,
+                          color: isSelected ? Colors.white : Colors.black87,
                           fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: isSelected ? Colors.red : Colors.transparent,
-                          ),
+                          side: BorderSide.none,
                         ),
                       ),
                     );
@@ -411,6 +413,7 @@ class _NewsScreenState extends State<NewsScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

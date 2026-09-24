@@ -1,8 +1,8 @@
 import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:flutter/material.dart';
 import '../api_service.dart';
-import 'package:flutter_html/flutter_html.dart';
-
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 class AchievementDetailsScreen extends StatefulWidget {
   final String id;
   const AchievementDetailsScreen({super.key, required this.id});
@@ -24,8 +24,19 @@ class _AchievementDetailsScreenState extends State<AchievementDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("उपलब्धि विवरण")),
-      body: FutureBuilder<Map<String, dynamic>>(
+      backgroundColor: Constants.navBarColor,
+      appBar: AppBar(
+        title: const Text(
+          "उपलब्धि विवरण",
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: CurvedBody(
+        child: FutureBuilder<Map<String, dynamic>>(
         future: _achievementFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -79,7 +90,10 @@ class _AchievementDetailsScreenState extends State<AchievementDetailsScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
                       "${Constants.storageUrl}/${achievement['image_url']}",
-                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox.shrink(),
                     ),
                   ),
                 const SizedBox(height: 8),
@@ -90,14 +104,12 @@ class _AchievementDetailsScreenState extends State<AchievementDetailsScreen> {
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 const SizedBox(height: 12),
-                Html(
-                  data: achievement['content'] ?? 'कोई विवरण नहीं',
-                  style: {
-                    "body": Style(
-                      fontSize: FontSize(16),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  },
+                HtmlWidget(
+                  achievement['content'] ?? 'कोई विवरण नहीं',
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 const Divider(),
@@ -115,8 +127,9 @@ class _AchievementDetailsScreenState extends State<AchievementDetailsScreen> {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _CommentsSection extends StatefulWidget {

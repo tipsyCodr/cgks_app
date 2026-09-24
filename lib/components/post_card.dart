@@ -6,7 +6,7 @@ import 'package:cgks/screens/achievement_details.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gal/gal.dart';
 import 'package:intl/intl.dart';
 // import 'package:readmore/readmore.dart';
@@ -157,7 +157,7 @@ class _PostCardState extends State<PostCard> {
             child: GestureDetector(
               onTap: () => setState(() => expanded = !expanded),
               child: expanded
-                  ? Html(data: widget.post['content'] ?? widget.post['title'])
+                  ? HtmlWidget(widget.post['content'] ?? widget.post['title'])
                   : Text(
                       _stripHtml(
                         widget.post['content'] ?? widget.post['title'],
@@ -200,17 +200,17 @@ class _PostCardState extends State<PostCard> {
                   );
                 }
               },
-              child: AspectRatio(
-                aspectRatio: 4 / 5,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                  child: Image.network(
-                    "${Constants.storageUrl}/${widget.post['image_url']}",
-                    fit: BoxFit.cover,
-                  ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+                child: Image.network(
+                  "${Constants.storageUrl}/${widget.post['image_url']}",
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox.shrink(),
                 ),
               ),
             ),

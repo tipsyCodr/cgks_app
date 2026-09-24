@@ -1,4 +1,5 @@
 import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:flutter/material.dart';
 import '../api_service.dart';
 import 'package:intl/intl.dart';
@@ -27,8 +28,19 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('घोषणा विवरण'), centerTitle: true),
-      body: FutureBuilder<Map<String, dynamic>>(
+      backgroundColor: Constants.navBarColor,
+      appBar: AppBar(
+        title: const Text(
+          'घोषणा विवरण',
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: CurvedBody(
+        child: FutureBuilder<Map<String, dynamic>>(
         future: _announcementFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -129,6 +141,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
 }

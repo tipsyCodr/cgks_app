@@ -1,4 +1,6 @@
 import 'package:cgks/api_service.dart';
+import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:cgks/components/post_card.dart';
 import 'package:flutter/material.dart';
 
@@ -38,12 +40,21 @@ class _AchievementScreenState extends State<AchievementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.navBarColor,
       appBar: AppBar(
-        title: const Text("उपलब्धि"), // Achievement in Hindi
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "उपलब्धि",
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
+        ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
+      body: CurvedBody(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
           // Categories List
           FutureBuilder<List<dynamic>>(
             future: _categoriesFuture,
@@ -65,7 +76,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: const Text("All"),
+                          label: const Text("सभी"),
                           selected: isSelected,
                           onSelected: (selected) {
                             if (selected) {
@@ -75,21 +86,18 @@ class _AchievementScreenState extends State<AchievementScreen> {
                               _fetchAchievements();
                             }
                           },
-                          backgroundColor: Colors.grey[200],
-                          selectedColor: Colors.green[100],
+                          backgroundColor: const Color(0xFFF1F3F5),
+                          selectedColor: Constants.accentColor,
+                          showCheckmark: false,
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.green : Colors.black,
+                            color: isSelected ? Colors.white : Colors.black87,
                             fontWeight: isSelected
                                 ? FontWeight.bold
-                                : FontWeight.normal,
+                                : FontWeight.w500,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                              color: isSelected
-                                  ? Colors.green
-                                  : Colors.transparent,
-                            ),
+                            side: BorderSide.none,
                           ),
                         ),
                       );
@@ -110,21 +118,18 @@ class _AchievementScreenState extends State<AchievementScreen> {
                           });
                           _fetchAchievements();
                         },
-                        backgroundColor: Colors.grey[200],
-                        selectedColor: Colors.green[100],
+                        backgroundColor: const Color(0xFFF1F3F5),
+                        selectedColor: Constants.accentColor,
+                        showCheckmark: false,
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.green : Colors.black,
+                          color: isSelected ? Colors.white : Colors.black87,
                           fontWeight: isSelected
                               ? FontWeight.bold
-                              : FontWeight.normal,
+                              : FontWeight.w500,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: isSelected
-                                ? Colors.green
-                                : Colors.transparent,
-                          ),
+                          side: BorderSide.none,
                         ),
                       ),
                     );
@@ -170,6 +175,7 @@ class _AchievementScreenState extends State<AchievementScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

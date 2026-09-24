@@ -8,6 +8,7 @@ import 'package:cgks/screens/anouncements_screen.dart';
 import 'package:cgks/screens/achievement_screen.dart';
 import 'package:cgks/screens/news_screen.dart';
 import 'package:cgks/screens/search_screen.dart';
+import 'package:cgks/constants.dart';
 
 class BottomNav extends StatefulWidget {
   @override
@@ -78,7 +79,7 @@ class _BottomNavState extends State<BottomNav> {
             tabBuilder: (int i, bool active) {
               return navItem(iconList[i], labels[i], active);
             },
-            backgroundColor: Colors.black,
+            backgroundColor: Constants.navBarColor,
             activeIndex: _index,
             gapLocation: GapLocation.center,
             notchSmoothness: NotchSmoothness.smoothEdge,

@@ -1,5 +1,6 @@
 import 'package:cgks/api_service.dart';
 import 'package:cgks/constants.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:cgks/screens/user_details_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -152,55 +153,59 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.navBarColor,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "सदस्य खोजें",
-          style: TextStyle(fontWeight: FontWeight.w800),
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 18),
         ),
         centerTitle: true,
-        elevation: 4,
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        elevation: 0,
+        backgroundColor: Constants.navBarColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            SizedBox(height: 12),
-            _smallTextField("नाम से ढूंढे", (v) {
-              setState(() => adhikariNameQuery = v);
-              fetchUsers();
-            }),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _smallDropdown(
-                    hint: "पद स्तर",
-                    value: selectedPosition,
-                    items: positions,
-                    onChanged: (v) async {
-                      setState(() => selectedPosition = v);
-                      await fetchUsers();
-                    },
+      body: CurvedBody(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              _smallTextField("नाम से ढूंढे", (v) {
+                setState(() => adhikariNameQuery = v);
+                fetchUsers();
+              }),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _smallDropdown(
+                      hint: "पद स्तर",
+                      value: selectedPosition,
+                      items: positions,
+                      onChanged: (v) async {
+                        setState(() => selectedPosition = v);
+                        await fetchUsers();
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _smallDropdown(
-                    hint: "पद नाम",
-                    value: selectedDesignation,
-                    items: designations,
-                    onChanged: (v) async {
-                      setState(() => selectedDesignation = v);
-                      await fetchUsers();
-                    },
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _smallDropdown(
+                      hint: "पद नाम",
+                      value: selectedDesignation,
+                      items: designations,
+                      onChanged: (v) async {
+                        setState(() => selectedDesignation = v);
+                        await fetchUsers();
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            Expanded(child: _buildAdhikariList()),
-          ],
+                ],
+              ),
+              const SizedBox(height: 12),
+              Expanded(child: _buildAdhikariList()),
+            ],
+          ),
         ),
       ),
     );

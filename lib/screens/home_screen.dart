@@ -2,6 +2,8 @@ import 'dart:convert';
 
 // import 'package:cgks/bottom_navigation.dart';
 import 'package:cgks/components/shorts_carousel.dart';
+import 'package:cgks/components/app_banner_carousel.dart';
+import 'package:cgks/components/announcement_card.dart';
 import 'package:cgks/features/auth/login_page.dart';
 import 'package:cgks/features/profile/profile_screen.dart';
 import 'package:cgks/screens/anouncements_screen.dart';
@@ -15,6 +17,7 @@ import 'package:cgks/screens/announcement_detail_screen.dart';
 import 'package:cgks/screens/news_detail_screen.dart';
 import 'package:cgks/constants.dart';
 import 'package:cgks/models/contact_details.dart';
+import 'package:cgks/components/curved_body.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -117,8 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final newsFuture = api.getAllNews();
 
       final results = await Future.wait([announcementsFuture, newsFuture]);
-      final announcementsData = results[0] as List<dynamic>;
-      final newsData = results[1] as List<dynamic>;
+      final announcementsData = results[0];
+      final newsData = results[1];
 
       List<Map<String, dynamic>> tempAnnouncements = [];
       List<Map<String, dynamic>> tempNews = [];
@@ -131,6 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
           'title': item['title'] ?? 'No Title',
           'image': item['image_url'],
           'created_at': item['created_at'],
+          'published_date': item['published_date'],
+          'category_name': item['category_name'] ??
+              (item['category'] is Map ? item['category']['name'] : null) ??
+              'Uncategorized',
           'data': item,
         });
       }
@@ -205,96 +212,68 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light background
+      backgroundColor: Constants.navBarColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Constants.navBarColor,
         elevation: 0,
         centerTitle: false,
-        title: FutureBuilder<Map<String, dynamic>?>(
-          future: getUserData(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox(
-                height: 50,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            final user = snapshot.data!;
-            final userName = user['name'] ?? "Unknown";
-            final pad = user['district'] ?? "N/A";
-            final phone = user['mobile'] ?? "N/A";
-            final profilePhoto = user['profile_photo'] != null
-                ? "https://cgks.pathideamultiskill.com/storage/${user['profile_photo']}"
-                : null;
-
-            return SizedBox(
-              height: 60, // REQUIRED
-              child: GestureDetector(
-                onTap: () {
-                  if (!context.mounted) return;
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => ProfileScreen()),
-                  );
-                },
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Colors.transparent,
-                      child: ClipOval(
-                        child: profilePhoto != null
-                            ? Image.network(
-                                profilePhoto,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.person,
-                                    color: Colors.grey,
-                                    size: 30,
-                                  );
-                                },
-                              )
-                            : const Icon(
-                                Icons.person,
-                                color: Colors.grey,
-                                size: 30,
-                              ),
-                      ),
+        toolbarHeight: 72,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(8),
+          child: SizedBox(height: 8),
+        ),
+        titleSpacing: 14,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              height: 42,
+              width: 42,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    "छत्तीसगढ़ क्रांति सेना",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const SizedBox(width: 1),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          userName,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(phone, style: TextStyle(fontSize: 10)),
-                        Text(pad, style: TextStyle(fontSize: 10)),
-                      ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    "हमर समाज  •  हमर अधिकार  •  हमर छत्तीसगढ़",
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w400,
                     ),
-                  ],
-                ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+          ],
         ),
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 16),
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: const Icon(Icons.live_tv, color: Colors.red),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.live_tv, color: Colors.white, size: 20),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -303,90 +282,211 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
+          const SizedBox(width: 8),
+          FutureBuilder<Map<String, dynamic>?>(
+            future: getUserData(),
+            builder: (context, snapshot) {
+              final user = snapshot.data;
+              final profilePhoto = user != null && user['profile_photo'] != null
+                  ? "https://cgks.pathideamultiskill.com/storage/${user['profile_photo']}"
+                  : null;
+
+              return GestureDetector(
+                onTap: () {
+                  if (!context.mounted) return;
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 19,
+                  backgroundColor: Colors.white24,
+                  child: ClipOval(
+                    child: profilePhoto != null
+                        ? Image.network(
+                            profilePhoto,
+                            width: 38,
+                            height: 38,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.person,
+                              color: Colors.white70,
+                              size: 22,
+                            ),
+                          )
+                        : const Icon(
+                            Icons.person,
+                            color: Colors.white70,
+                            size: 22,
+                          ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 14),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+      body: CurvedBody(
+        backgroundColor: Colors.grey[50]!,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF1565C0),
-                    Color(0xFF42A5F5),
-                  ], // Deep Blue to Light Blue
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1565C0).withOpacity(0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    if (user == null) {
-                      Fluttertoast.showToast(
-                        msg: "Please wait, content loading...",
-                      );
-                      return;
-                    }
-                    final referralCode = user!['referral_code'] ?? '';
-                    if (referralCode.isEmpty) {
-                      Fluttertoast.showToast(msg: "Referral code not found");
-                      return;
-                    }
-                    final link =
-                        "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
-                    Share.share(
-                      "Join CGKS App using my referral code: $referralCode\n\nLink: $link",
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                      horizontal: 24.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.share_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const Text(
-                          'Share Referral Link',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                          ),
+            const SizedBox(height: 16),
+            const AppBannerCarousel(),
+            const SizedBox(height: 14),
+
+            // Action Buttons: Visit Website & Share Referral (Side by Side)
+            Row(
+              children: [
+                // 1. Visit Website Button
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF8B121A),
+                          Color(0xFFB71C1C),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF8B121A).withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () async {
+                          final uri = Uri.parse(Constants.baseUrl);
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14.0,
+                            horizontal: 8.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.language_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  'Visit Website',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 0.2,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+
+                const SizedBox(width: 10),
+
+                // 2. Share Referral Link Button
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF1565C0),
+                          Color(0xFF42A5F5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF1565C0).withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (user == null) {
+                            Fluttertoast.showToast(
+                              msg: "Please wait, content loading...",
+                            );
+                            return;
+                          }
+                          final referralCode = user!['referral_code'] ?? '';
+                          if (referralCode.isEmpty) {
+                            Fluttertoast.showToast(msg: "Referral code not found");
+                            return;
+                          }
+                          final link =
+                              "https://cgks.pathideamultiskill.com/register?ref=$referralCode";
+                          Share.share(
+                            "Join CGKS App using my referral code: $referralCode\n\nLink: $link",
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14.0,
+                            horizontal: 8.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.share_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  'Share Referral',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 0.2,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             SizedBox(height: 24),
@@ -401,16 +501,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "घोषणा",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      children: const [
+                        Icon(
+                          Icons.campaign,
+                          color: Color(0xFFE53935),
+                          size: 26,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "घोषणा",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
+                    InkWell(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -418,98 +528,57 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      child: const Text(
-                        "See All",
-                        style: TextStyle(color: Colors.red),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 4,
+                          horizontal: 2,
+                        ),
+                        child: Row(
+                          children: const [
+                            Text(
+                              "सभी देखें",
+                              style: TextStyle(
+                                color: Color(0xFFE53935),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(width: 2),
+                            Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFFE53935),
+                              size: 18,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 180,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _announcements.length,
-                    itemBuilder: (context, index) {
-                      final item = _announcements[index];
-                      final imageUrl = item['image'];
-                      final title = item['title'];
-
-                      bool hasImage =
-                          imageUrl != null &&
-                          imageUrl.toString().isNotEmpty &&
-                          imageUrl.toString() != "null";
-
-                      return Container(
-                        width: 280,
-                        margin: const EdgeInsets.only(right: 16),
-                        decoration: BoxDecoration(
-                          color: hasImage
-                              ? Colors.transparent
-                              : Colors
-                                    .primaries[index % Colors.primaries.length]
-                                    .shade400,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount:
+                      _announcements.length > 3 ? 3 : _announcements.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final item = _announcements[index];
+                    return AnnouncementCard(
+                      announcement: item,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AnnouncementDetailScreen(
+                              announcementId: item['id'].toString(),
                             ),
-                          ],
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => AnnouncementDetailScreen(
-                                  announcementId: item['id'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: hasImage
-                                ? Image.network(
-                                    "${Constants.storageUrl}/$imageUrl",
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: Colors.grey[300],
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        title,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          height: 1.4,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
               ],
@@ -787,6 +856,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -1,6 +1,7 @@
 import 'package:cgks/dto/register_user_dto.dart';
 import 'package:cgks/models/user.dart';
 import 'package:cgks/models/contact_details.dart';
+import 'package:cgks/models/app_banner.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
@@ -1108,5 +1109,25 @@ class ApiService {
     } else {
       throw Exception("Failed to load achievements by category");
     }
+  }
+
+  Future<List<AppBannerModel>> getAppBanners() async {
+    try {
+      final response = await http
+          .get(Uri.parse("$baseUrl/app-banners"))
+          .timeout(timeout);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((item) => AppBannerModel.fromJson(item)).toList();
+      }
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching app banners: $e");
+      }
+      return [];
+    }
+
   }
 }
