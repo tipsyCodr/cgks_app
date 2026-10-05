@@ -132,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
           'type': 'announcement',
           'id': item['id'].toString(),
           'title': item['title'] ?? 'No Title',
-          'image': item['image_url'],
+          'image': item['image_url'] is List && (item['image_url'] as List).isNotEmpty
+              ? (item['image_url'] as List).first
+              : item['image_url'],
           'created_at': item['created_at'],
           'published_date': item['published_date'],
           'category_name': item['category_name'] ??
@@ -148,7 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
           'type': 'news',
           'id': item['id'].toString(),
           'title': item['title'] ?? 'No Title',
-          'image': item['image_url'],
+          'image': item['image_url'] is List && (item['image_url'] as List).isNotEmpty
+              ? (item['image_url'] as List).first
+              : item['image_url'],
           'created_at': item['created_at'],
           'data': item,
         });

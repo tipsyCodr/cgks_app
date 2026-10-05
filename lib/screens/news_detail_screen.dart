@@ -3,6 +3,7 @@ import 'package:cgks/components/curved_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import '../api_service.dart';
+import 'package:cgks/components/multi_image_slider.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final String newsId;
@@ -84,17 +85,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (news['image_url'] != null && news['image_url'] != "null")
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      "${Constants.storageUrl}/${news['image_url']}",
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox.shrink(),
-                    ),
-                  ),
+                MultiImageSlider(
+                  images: extractImages(news['image_url']),
+                  height: 280,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   // textAlign: TextAlign.justify,

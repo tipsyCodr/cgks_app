@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 
 // import '../api_service.dart';
 import '../screens/news_detail_screen.dart';
+import 'package:cgks/components/multi_image_slider.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
@@ -121,7 +122,14 @@ class _PostCardState extends State<PostCard> {
                   onSelected: (value) {
                     if (value == 'download') {
                       if (widget.post['image_url'] != null) {
-                        _downloadImage(widget.post['image_url'], context);
+                        final imgs = extractImages(widget.post['image_url']);
+                        if (imgs.isNotEmpty) {
+                          _downloadImage(imgs.first, context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("No image to download")),
+                          );
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("No image to download")),
@@ -176,47 +184,43 @@ class _PostCardState extends State<PostCard> {
           const SizedBox(height: 10),
 
           /// -------- IMAGE ----------
-          if (widget.post['image_url'] != null &&
-              widget.post['image_url'] != "null")
-            GestureDetector(
-              onTap: () {
-                if (!widget.isAchievement) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => NewsDetailScreen(
-                        newsId: widget.post['id'].toString(),
-                      ),
-                    ),
-                  );
-                } else if (widget.isAchievement) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AchievementDetailsScreen(
-                        id: widget.post['id'].toString(),
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: ClipRRect(
+          Builder(
+            builder: (context) {
+              final images = extractImages(widget.post['image_url']);
+              if (images.isEmpty) return const SizedBox.shrink();
+
+              return MultiImageSlider(
+                images: images,
+                height: 240,
+                fit: BoxFit.cover,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(12),
                   bottomRight: Radius.circular(12),
                 ),
-                child: Image.network(
-                  "${Constants.storageUrl}/${widget.post['image_url']}",
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
-                ),
-              ),
-            ),
-
-          const SizedBox(height: 10),
-
+                onTap: () {
+                  if (!widget.isAchievement) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => NewsDetailScreen(
+                          newsId: widget.post['id'].toString(),
+                        ),
+                      ),
+                    );
+                  } else if (widget.isAchievement) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AchievementDetailsScreen(
+                          id: widget.post['id'].toString(),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          ),
           /// -------- ACTION ROW ----------
           if (widget.showActions)
             Padding(
