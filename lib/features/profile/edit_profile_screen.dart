@@ -445,6 +445,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         readOnly: readOnly,
         onTap: onTap,
         textCapitalization: textCapitalization,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         decoration: InputDecoration(
           labelText: required ? "$label *" : label,
           hintText: hint,

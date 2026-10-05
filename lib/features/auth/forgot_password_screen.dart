@@ -11,17 +11,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool isLoading = false;
 
   Future<void> sendResetLink() async {
-    if (emailController.text.trim().isEmpty) {
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Please enter your email")));
       return;
     }
 
+    debugPrint("[ForgotPasswordScreen] User requested reset for: $email");
     setState(() => isLoading = true);
 
     try {
-      await ApiService().sendResetLink(emailController.text.trim());
+      await ApiService().sendResetLink(email);
+      debugPrint("[ForgotPasswordScreen] Reset link successfully sent to: $email");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -31,9 +34,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context); // Optional: Go back after success
+        Navigator.pop(context);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint("[ForgotPasswordScreen] Error sending reset link: $e");
+      debugPrint("[ForgotPasswordScreen] Stack trace: $stackTrace");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -62,6 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             TextField(
               controller: emailController,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: "अपना ईमेल डाले ",
                 border: OutlineInputBorder(),

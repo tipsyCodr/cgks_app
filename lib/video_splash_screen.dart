@@ -1,5 +1,5 @@
 import 'package:cgks/bottom_navigation.dart';
-import 'package:cgks/features/auth/register_page.dart';
+import 'package:cgks/features/auth/login_page.dart';
 import 'package:cgks/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,7 +52,7 @@ class _VideoSplashScreenState extends State<VideoSplashScreen> {
       );
     } else {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const RegisterPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     }
   }

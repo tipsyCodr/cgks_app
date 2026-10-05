@@ -213,6 +213,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _smallTextField(String label, Function(String) onChanged) {
     return TextField(
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
         isDense: true,

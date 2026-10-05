@@ -26,7 +26,11 @@ Widget _buildTextField({
   String? helperText,
   Color? helperColor,
   void Function(String)? onChanged,
+  BuildContext? context,
 }) {
+  final textColor = context != null
+      ? Theme.of(context).colorScheme.onSurface
+      : null;
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: TextFormField(
@@ -34,6 +38,7 @@ Widget _buildTextField({
       keyboardType: type,
       obscureText: obscure,
       onChanged: onChanged,
+      style: textColor != null ? TextStyle(color: textColor) : null,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -250,50 +255,64 @@ class _RegisterPageState extends State<RegisterPage> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
-                              ),
-                            );
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ),
+                              );
+                            }
                           },
-                          child: const Text(
-                            "पहले से अकाउंट है? लॉग इन करें.",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
-                            ),
+                          child: Builder(
+                            builder: (ctx) {
+                              final color = Theme.of(ctx).colorScheme.onSurface;
+                              return Text(
+                                "पहले से अकाउंट है? लॉग इन करें.",
+                                style: TextStyle(
+                                  color: color,
+                                  fontSize: 14,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: color,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
-                      _buildTextField(controller: form.name, label: "नाम"),
+                      _buildTextField(controller: form.name, label: "नाम", context: context),
                       _buildTextField(
                         controller: form.mobile,
                         label: "मोबाइल नंबर",
                         type: TextInputType.phone,
+                        context: context,
                       ),
                       _buildTextField(
                         controller: form.email,
                         label: "ईमेल",
                         type: TextInputType.emailAddress,
+                        context: context,
                       ),
                       _buildTextField(
                         controller: form.address,
                         label: "पुर्खौती निवास",
+                        context: context,
                       ),
                       _buildTextField(
                         controller: form.currentAddress,
                         label: "वर्तमान निवास",
+                        context: context,
                       ),
                       _buildTextField(
                         controller: form.whatsapp,
                         label: "व्हाट्सएप नंबर",
                         type: TextInputType.phone,
+                        context: context,
                       ),
-                      _buildTextField(controller: form.district, label: "जिला"),
-                      _buildTextField(controller: form.city, label: "शहर"),
+                      _buildTextField(controller: form.district, label: "जिला", context: context),
+                      _buildTextField(controller: form.city, label: "शहर", context: context),
                       _buildTextField(
                         controller: form.referralCode,
                         label: "रेफरल कोड",
@@ -302,6 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         helperColor: _isReferrerValid
                             ? Colors.green[700]
                             : Colors.red,
+                        context: context,
                         suffixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -339,6 +359,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: form.password,
                         label: "पासवर्ड",
                         obscure: !_isPasswordVisible,
+                        context: context,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible
@@ -356,6 +377,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: form.confPassword,
                         label: "पासवर्ड सुनिश्चित करे",
                         obscure: !_isConfPasswordVisible,
+                        context: context,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isConfPasswordVisible

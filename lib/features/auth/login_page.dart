@@ -15,6 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  static bool _initialDeepLinkChecked = false;
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool isLoading = false; // 👈 loader state
@@ -27,6 +28,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _checkDeepLink() async {
+    if (_initialDeepLinkChecked) return;
+    _initialDeepLinkChecked = true;
     try {
       final appLinks = AppLinks();
       final uri = await appLinks.getInitialLink();
@@ -78,8 +81,9 @@ class _LoginPageState extends State<LoginPage> {
         (Route<dynamic> route) => false, // remove all previous routes
       );
     } catch (e) {
+      final msg = e.toString().replaceAll(RegExp(r'^Exception:\s*'), '');
       Fluttertoast.showToast(
-        msg: "Login failed: $e",
+        msg: msg,
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -90,17 +94,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
-
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           "लॉग इन ",
-          style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
+          style: TextStyle(fontWeight: FontWeight.w900),
         ),
         centerTitle: true,
-        // leading: const BackButton(),
       ),
       body: Stack(
         children: [
@@ -116,15 +117,16 @@ class _LoginPageState extends State<LoginPage> {
                     AutofillGroup(
                       child: TextFormField(
                         controller: _mobileController,
+                        style: TextStyle(color: colorScheme.onSurface),
                         autofillHints: [
                           AutofillHints.username,
                           AutofillHints.telephoneNumber,
                         ],
-                        keyboardType: TextInputType.phone, // or phone
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           labelText: 'मोबाइल नंबर डाले',
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: colorScheme.surfaceContainerHighest,
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey,
@@ -148,12 +150,12 @@ class _LoginPageState extends State<LoginPage> {
                       child: TextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
+                        style: TextStyle(color: colorScheme.onSurface),
                         autofillHints: [AutofillHints.password],
-
                         decoration: InputDecoration(
                           labelText: 'पासवर्ड डाले',
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: colorScheme.surfaceContainerHighest,
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey,
@@ -207,12 +209,12 @@ class _LoginPageState extends State<LoginPage> {
                               MaterialPageRoute(builder: (_) => ReferralPage()),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             "अकाउंट नहीं है? हमसे जुड़े",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: colorScheme.onSurface,
                               decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
+                              decorationColor: colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -224,12 +226,12 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             "पासवर्ड याद नहीं ?",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: colorScheme.onSurface,
                               decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
+                              decorationColor: colorScheme.onSurface,
                             ),
                           ),
                         ),

@@ -705,8 +705,12 @@ class ApiService {
 
   Future<bool> sendResetLink(String email) async {
     try {
+      final url = "$baseUrl/forgot-password";
+      debugPrint("[Forgot Password] Request URL: $url");
+      debugPrint("[Forgot Password] Request Email: $email");
+
       final response = await http.post(
-        Uri.parse("$baseUrl/forgot-password"),
+        Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
@@ -714,16 +718,28 @@ class ApiService {
         body: jsonEncode({"email": email}),
       );
 
-      debugPrint("Forgot Password Response: ${response.body}");
+      debugPrint("[Forgot Password] Status Code: ${response.statusCode}");
+      debugPrint("[Forgot Password] Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
+        debugPrint("[Forgot Password] Success: reset link sent.");
         return true;
       } else {
-        final data = jsonDecode(response.body);
-        throw Exception(data['message'] ?? "Failed to send reset link");
+        dynamic data;
+        try {
+          data = jsonDecode(response.body);
+        } catch (_) {}
+
+        final errorMessage = data is Map
+            ? (data['error'] ?? data['message'] ?? "Failed to send reset link")
+            : "Failed to send reset link (${response.statusCode})";
+
+        debugPrint("[Forgot Password] API Error: $errorMessage");
+        throw Exception(errorMessage);
       }
-    } catch (e) {
-      debugPrint("Error sending reset link: $e");
+    } catch (e, stackTrace) {
+      debugPrint("[Forgot Password] Exception occurred: $e");
+      debugPrint("[Forgot Password] Stack trace: $stackTrace");
       rethrow;
     }
   }
