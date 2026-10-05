@@ -382,13 +382,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required String title,
     required IconData icon,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
+        color: isDark
+            ? Colors.red.shade900.withValues(alpha: 0.3)
+            : Colors.red.shade50,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.red.shade100),
+        border: Border.all(
+          color: isDark ? Colors.red.shade800 : Colors.red.shade100,
+        ),
       ),
       child: Row(
         children: [
@@ -405,7 +410,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Icon(icon, size: 20, color: Colors.red.shade700),
+          Icon(
+            icon,
+            size: 20,
+            color: isDark ? Colors.red.shade400 : Colors.red.shade700,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -413,7 +422,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.red.shade900,
+                color: isDark ? Colors.red.shade200 : Colors.red.shade900,
               ),
             ),
           ),
@@ -462,6 +471,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text("सदस्यता पाती (Profile Edit)"),
@@ -479,22 +489,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               // Header Card
               Card(
-                color: Colors.orange.shade50,
+                color: isDark
+                    ? Colors.orange.shade900.withValues(alpha: 0.25)
+                    : Colors.orange.shade50,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(color: Colors.orange.shade200),
+                  side: BorderSide(
+                    color: isDark ? Colors.orange.shade700 : Colors.orange.shade200,
+                  ),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.deepOrange),
-                      SizedBox(width: 10),
+                      Icon(
+                        Icons.info_outline,
+                        color: isDark ? Colors.orange.shade300 : Colors.deepOrange,
+                      ),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           "अपन प्रोफाइल के पूरा विवरण भरव, जेकर से आप मन के सदस्यता पाती डिजिटल रूप म सुरक्षित रहय।",
-                          style: TextStyle(fontSize: 13, color: Colors.brown),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isDark ? Colors.orange.shade200 : Colors.brown,
+                          ),
                         ),
                       ),
                     ],
@@ -680,11 +700,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return FilterChip(
                           label: Text(ruchi),
                           selected: isSelected,
-                          selectedColor: Colors.red.shade100,
-                          checkmarkColor: Colors.red.shade800,
+                          selectedColor: isDark
+                              ? Colors.red.shade900.withValues(alpha: 0.5)
+                              : Colors.red.shade100,
+                          checkmarkColor: isDark ? Colors.white : Colors.red.shade800,
                           labelStyle: TextStyle(
                             fontSize: 12,
-                            color: isSelected ? Colors.red.shade900 : Colors.black87,
+                            color: isDark
+                                ? (isSelected ? Colors.white : Colors.white70)
+                                : (isSelected ? Colors.red.shade900 : Colors.black87),
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                           onSelected: (selected) {

@@ -20,8 +20,11 @@ class RegisterPage extends StatefulWidget {
 Widget _buildTextField({
   required TextEditingController controller,
   required String label,
+  String? hintText,
   TextInputType type = TextInputType.text,
   bool obscure = false,
+  bool required = true,
+  TextCapitalization textCapitalization = TextCapitalization.none,
   Widget? suffixIcon,
   String? helperText,
   Color? helperColor,
@@ -37,10 +40,12 @@ Widget _buildTextField({
       controller: controller,
       keyboardType: type,
       obscureText: obscure,
+      textCapitalization: textCapitalization,
       onChanged: onChanged,
       style: textColor != null ? TextStyle(color: textColor) : null,
       decoration: InputDecoration(
-        labelText: label,
+        labelText: required ? "$label *" : label,
+        hintText: hintText,
         border: const OutlineInputBorder(),
         suffixIcon: suffixIcon,
         helperText: helperText,
@@ -52,7 +57,10 @@ Widget _buildTextField({
               )
             : null,
       ),
-      validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+      validator: (value) =>
+          (required && (value == null || value.trim().isEmpty))
+              ? 'Required'
+              : null,
     ),
   );
 }
@@ -282,7 +290,20 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      _buildTextField(controller: form.name, label: "नाम", context: context),
+                      _buildTextField(
+                        controller: form.name,
+                        label: "नाव (नाम - छत्तीसगढ़ी/हिंदी म)",
+                        hintText: "उदा. अमित कुमार बघेल",
+                        context: context,
+                      ),
+                      _buildTextField(
+                        controller: form.name2,
+                        label: "अंग्रेजी म नाव (IN CAPITAL)",
+                        hintText: "उदा. AMIT KUMAR BAGHEL",
+                        required: false,
+                        textCapitalization: TextCapitalization.characters,
+                        context: context,
+                      ),
                       _buildTextField(
                         controller: form.mobile,
                         label: "मोबाइल नंबर",

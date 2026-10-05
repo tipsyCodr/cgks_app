@@ -41,10 +41,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     final link = "${Constants.baseUrl}/register?ref=$referralCode";
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -58,22 +59,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: isDark ? Colors.grey[700] : Colors.grey[300],
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 "मेरा रेफरल क्यूआर कोड",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 user!['name'] ?? '',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.red,
+                  color: isDark ? Colors.red.shade400 : Colors.red,
                 ),
               ),
               const SizedBox(height: 16),
@@ -103,10 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               Text(
                 "कोड: $referralCode",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               const SizedBox(height: 16),
@@ -679,12 +685,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required List<Widget> children,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14.0),
@@ -693,19 +702,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                Icon(icon, size: 20, color: Colors.red.shade700),
+                Icon(
+                  icon,
+                  size: 20,
+                  color: isDark ? Colors.red.shade400 : Colors.red.shade700,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Colors.red.shade800,
+                    color: isDark ? Colors.red.shade300 : Colors.red.shade800,
                   ),
                 ),
               ],
             ),
-            const Divider(height: 20),
+            Divider(height: 20, color: isDark ? Colors.grey.shade800 : null),
             ...children,
           ],
         ),
@@ -714,6 +727,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildInfoRow(String label, dynamic value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final str = (value == null || value.toString().trim().isEmpty) ? '-' : value.toString();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -726,7 +740,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               label,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.grey.shade600,
+                color: isDark ? Colors.white70 : Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -735,10 +749,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: Text(
               str,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ),
@@ -788,6 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : null;
 
     final ruchiList = _parseRuchi(user!['ruchi']);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -900,25 +915,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.amber.shade50,
+                  color: isDark
+                      ? Colors.amber.shade900.withValues(alpha: 0.25)
+                      : Colors.amber.shade50,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.amber.shade400),
+                  border: Border.all(
+                    color: isDark ? Colors.amber.shade700 : Colors.amber.shade400,
+                  ),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.assignment_late_outlined, color: Colors.amber.shade800),
+                    Icon(
+                      Icons.assignment_late_outlined,
+                      color: isDark ? Colors.amber.shade400 : Colors.amber.shade800,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "अपन प्रोफाइल पूरा करव",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: isDark ? Colors.amber.shade200 : Colors.black87,
+                            ),
                           ),
                           Text(
                             "सदस्यता पाती के पूरा विवरण भरे बर Edit Profile म क्लिक करव।",
-                            style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                            ),
                           ),
                         ],
                       ),
@@ -933,7 +962,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         if (updated != null) setState(() => user = updated);
                       },
-                      child: const Text("भरें", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        "भरें",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.amber.shade300 : Colors.red.shade700,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -998,11 +1033,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildInfoRow("पद / विवरण", user!['designation']),
                 if (ruchiList.isNotEmpty) ...[
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     "रूचियाँ:",
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.grey,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1012,9 +1047,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     runSpacing: 6,
                     children: ruchiList.map((r) {
                       return Chip(
-                        label: Text(r, style: const TextStyle(fontSize: 11)),
-                        backgroundColor: Colors.red.shade50,
-                        side: BorderSide(color: Colors.red.shade200),
+                        label: Text(
+                          r,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        backgroundColor: isDark
+                            ? Colors.red.shade900.withValues(alpha: 0.35)
+                            : Colors.red.shade50,
+                        side: BorderSide(
+                          color: isDark ? Colors.red.shade800 : Colors.red.shade200,
+                        ),
                         padding: EdgeInsets.zero,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       );
@@ -1056,26 +1101,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: Colors.blue.shade100),
+                side: BorderSide(
+                  color: isDark ? Colors.blue.shade900 : Colors.blue.shade100,
+                ),
               ),
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: isDark
+                        ? Colors.blue.shade900.withValues(alpha: 0.4)
+                        : Colors.blue.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.language, color: Colors.blue, size: 20),
+                  child: Icon(
+                    Icons.language,
+                    color: isDark ? Colors.blue.shade300 : Colors.blue,
+                    size: 20,
+                  ),
                 ),
-                title: const Text(
+                title: Text(
                   "वेबसाइट देखें (Visit Website)",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.blue),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: isDark ? Colors.blue.shade300 : Colors.blue,
+                  ),
                 ),
-                subtitle: const Text(
+                subtitle: Text(
                   Constants.baseUrl,
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey,
+                  ),
                 ),
-                trailing: const Icon(Icons.open_in_new, size: 18, color: Colors.blue),
+                trailing: Icon(
+                  Icons.open_in_new,
+                  size: 18,
+                  color: isDark ? Colors.blue.shade300 : Colors.blue,
+                ),
                 onTap: _launchWebsite,
               ),
             ),
@@ -1087,13 +1151,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: Colors.red.shade100),
+                side: BorderSide(
+                  color: isDark ? Colors.red.shade900 : Colors.red.shade100,
+                ),
               ),
               child: ListTile(
-                leading: const Icon(Icons.logout, color: Colors.red),
-                title: const Text(
+                leading: Icon(
+                  Icons.logout,
+                  color: isDark ? Colors.red.shade400 : Colors.red,
+                ),
+                title: Text(
                   "Logout",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.red.shade400 : Colors.red,
+                  ),
                 ),
                 onTap: () {
                   ApiService().logoutUser();

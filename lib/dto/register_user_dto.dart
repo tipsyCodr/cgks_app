@@ -3,6 +3,7 @@ import 'package:cgks/features/auth/controllers/register_form_controllers.dart';
 
 class RegisterUserDTO {
   final String name;
+  final String? name2;
   final String mobileNumber;
   final String? district;
   final String? city;
@@ -16,6 +17,7 @@ class RegisterUserDTO {
 
   RegisterUserDTO({
     required this.name,
+    this.name2,
     required this.mobileNumber,
     required this.email,
     required this.address,
@@ -31,6 +33,7 @@ class RegisterUserDTO {
   Map<String, dynamic> toJson() {
     return {
       "name": name,
+      "name2": name2,
       "district": district,
       "city": city,
       "email": email,
@@ -47,9 +50,11 @@ class RegisterUserDTO {
   /// Factory to build from form controllers
   factory RegisterUserDTO.fromControllers(RegisterFormControllers form) {
     final normalizedReferralCode = form.referralCode.text.trim();
+    final name2Text = form.name2.text.trim();
 
     return RegisterUserDTO(
       name: form.name.text,
+      name2: name2Text.isEmpty ? null : name2Text,
       mobileNumber: form.mobile.text,
       password: form.password.text,
       district: form.district.text,
